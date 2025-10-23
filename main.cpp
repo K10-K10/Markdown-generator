@@ -29,6 +29,20 @@ int main(int argc, char *argv[]) {
           break;
         }
       }
+      break;
+    case '-':
+      bool flag = true;
+      for (int i = 0; i < line.size(); i++) {
+        if (line[i] != '-') {
+          flag = false;
+          break;
+        }
+      }
+      if (flag)
+        oFile << "<hr>" << std::endl;
+      else
+        oFile << line << std::endl;
+      break;
     }
   }
   oFile << "</body>\n</HTML>" << std::endl;
