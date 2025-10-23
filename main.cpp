@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
   oFile << "<!DOCTYPE HTML>\n<body>" << std::endl;
   while (std::getline(iFile, line)) {
     switch (line[0]) {
-    case '#':
+    case '#': {
       for (int i = 0; i < 7; i++) {
         if (line[i] != '#') {
           line.erase(0, i);
@@ -30,7 +30,8 @@ int main(int argc, char *argv[]) {
         }
       }
       break;
-    case '-':
+    }
+    case '-': {
       bool flag = true;
       for (int i = 0; i < line.size(); i++) {
         if (line[i] != '-') {
@@ -41,8 +42,37 @@ int main(int argc, char *argv[]) {
       if (flag)
         oFile << "<hr>" << std::endl;
       else
-        oFile << line << std::endl;
+        oFile << "<p>" << line << "</p>" << std::endl;
       break;
+    }
+    case '*': {
+      if (line[1] == '*') {
+        line.erase(0, 2);
+        line.erase(line.size() - 2, 2);
+        oFile << "<strong>" << line << "</strong>" << std::endl;
+      } else {
+        line.erase(0, 1);
+        line.erase(line.end() - 1);
+        oFile << "<em>" << line << "</em>" << std::endl;
+      }
+      break;
+    }
+    case '_': {
+      if (line[1] == '_') {
+        line.erase(0, 2);
+        line.erase(line.size() - 2, 2);
+        oFile << "<strong>" << line << "</strong>" << std::endl;
+      } else {
+        line.erase(0, 1);
+        line.erase(line.end() - 1);
+        oFile << "<em>" << line << "</em>" << std::endl;
+      }
+      break;
+    }
+    default: {
+      oFile << "<p>" << line << "</p>" << std::endl;
+      break;
+    }
     }
   }
   oFile << "</body>\n</HTML>" << std::endl;
