@@ -17,6 +17,8 @@ int main(int argc, char *argv[]) {
   std::string line;
   oFile << "<!DOCTYPE HTML>\n<body>" << std::endl;
   while (std::getline(iFile, line)) {
+    if (line == "")
+      oFile << "<br>";
     switch (line[0]) {
     case '#': {
       for (int i = 0; i < 7; i++) {
@@ -25,7 +27,7 @@ int main(int argc, char *argv[]) {
           oFile << "<h" << i << ">" << line << "</h" << i << ">" << std::endl;
           break;
         } else if (i == 5 && line[6] == '#') {
-          oFile << "<p>" << line << "</p>" << std::endl;
+          oFile << line << std::endl;
           break;
         }
       }
@@ -42,7 +44,7 @@ int main(int argc, char *argv[]) {
       if (flag)
         oFile << "<hr>" << std::endl;
       else
-        oFile << "<p>" << line << "</p>" << std::endl;
+        oFile << line << std::endl;
       break;
     }
     case '*': {
@@ -70,7 +72,7 @@ int main(int argc, char *argv[]) {
       break;
     }
     default: {
-      oFile << "<p>" << line << "</p>" << std::endl;
+      oFile << line << std::endl;
       break;
     }
     }
