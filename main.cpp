@@ -1,6 +1,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <regex>
 #include <string>
 
 int main(int argc, char *argv[]) {
@@ -16,102 +17,26 @@ int main(int argc, char *argv[]) {
   std::ifstream iFile(fileName);
   std::string line;
   oFile << "<!DOCTYPE HTML>\n<body>" << std::endl;
+  std::regex Br(R"(\s{2,2}$)");
+  std::regex Bold(R"([_\*][_\*](.*?)[_\*][_\*])");
+  std::regex Em(R"([_\*](.*?)[_\*])");
+  std::regex Hr(R"(^[-]{3,}+$)");
+  std::regex S1(R"(~(.*?)~)"), S2(R"(~~(.*?)~~)");
+  std::string latest_line;
   while (std::getline(iFile, line)) {
     if (line == "")
-      oFile << "<br>" << std::endl;
-    if (line.ends_with("  ")) {
-      line.erase(line.size() - 2, 2);
-      line += "<br>";
-    }
-    std::cout << line << std::endl;
-    switch (line[0]) {
-    case '#': {
-      for (int i = 0; i < 7; i++) {
-        if (line[i] != '#') {
-          line.erase(0, i);
-          oFile << "<h" << i << ">" << line << "</h" << i << ">" << std::endl;
-          break;
-        } else if (i == 5 && line[6] == '#') {
-          oFile << line << std::endl;
-          break;
-        }
-      }
-      break;
-    }
-    case '-': {
-      bool flag = true;
-      for (int i = 0; i < line.size(); i++) {
-        if (line[i] != '-') {
-          flag = false;
-          break;
-        }
-      }
-      if (flag)
-        oFile << "<hr>" << std::endl;
-      else
-        oFile << line << std::endl;
-      break;
-    }
-    case '*': {
-      if (line[1] == '*' && line[line.size()]) {
-        if (line[2] == '*') {
-          line.erase(0, 3);
-          line.erase(line.size() - 3, 3);
-          oFile << "<strong><em>" << line << "</em></strong>" << std::endl;
-        } else {
-          line.erase(0, 2);
-          line.erase(line.size() - 2, 2);
-          oFile << "<strong>" << line << "</strong>" << std::endl;
-        }
-      } else if (line[line.size()] == '*') {
-        line.erase(0, 1);
-        line.erase(line.end() - 1);
-        oFile << "<em>" << line << "</em>" << std::endl;
-      } else {
-        if (line[line.size() - 1 == ' ' && line[line.size()]] == ' ') {
-          oFile << line << std::endl;
-          oFile << "<br>" << std::endl;
-        } else
-          oFile << line << std::endl;
-        break;
-      }
-      break;
-    }
-    case '_': {
-      if (line[1] == '_' && line[line.size() - 1] == '_' &&
-          line[line.size()] == '_') {
-        line.erase(0, 2);
-        line.erase(line.size() - 2, 2);
-        oFile << "<strong>" << line << "</strong>" << std::endl;
-      } else if (line[line.size()] == '_') {
-        line.erase(0, 1);
-        line.erase(line.end() - 1);
-        oFile << "<em>" << line << "</em>" << std::endl;
-      } else {
-        if (line[line.size() - 1 == ' ' && line[line.size()]] == ' ') {
-          oFile << line << std::endl;
-          oFile << "<br>" << std::endl;
-        } else
-          oFile << line << std::endl;
-        break;
-      }
-      break;
-    }
-    case '<': {
-      if (line[1] == 's' && line[2] == 'u' && line[3] == 'b' &&
-          line[3] == '>') {
-      }
-      break;
-    }
-    default: {
-      if (line[line.size() - 1 == ' ' && line[line.size()]] == ' ') {
-        oFile << line << std::endl;
-        oFile << "<br>" << std::endl;
-      } else
-        oFile << line << std::endl;
-      break;
-    }
-    }
+      line = "<br><br>";
+    std::string replaced_br = std::regex_replace(line, Br, "<br>");
+    std::string replaced_hr = std::regex_replace(replaced_br, Hr, "<hr>");
+    std::string replaced_bold =
+        std::regex_replace(replaced_hr, Bold, "<strong>$1</strong>");
+    std::string replaced_em =
+        std::regex_replace(replaced_bold, Em, "<em>$1</em>");
+    latest_line = replaced_em;
+    latest_line = std::regex_replace(latest_line, S2, "<s>$1</s>");
+    latest_line = std::regex_replace(latest_line, S1, "<s>$1</s>");
+    // latest_line = std::regex_replace(latest_line,Sub,)
+    oFile << latest_line << std::endl;
   }
   oFile << "</body>\n</HTML>" << std::endl;
   oFile.close();
