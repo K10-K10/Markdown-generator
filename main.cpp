@@ -12,16 +12,12 @@ std::regex Em(R"([*]([^*]+)[*]|[_]([^_]+)[_])");
 std::regex Hr(R"(^([-_*])\1{2,}+$)");
 std::regex S(R"([^~]~([^~]+)~[^~]|~~([^~]+)~~)");
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
   std::string fileName, htmlFile = "a.html";
-  if (argc < 2)
-  {
+  if (argc < 2) {
     std::cout << "Error: File can't open" << std::endl;
     return 0;
-  }
-  else
-  {
+  } else {
     fileName = argv[1];
     htmlFile = argc == 2 ? "a.html" : argv[2];
   }
@@ -34,25 +30,25 @@ int main(int argc, char *argv[])
   std::string line;
   std::string latest_line;
   std::smatch m;
-  while (std::getline(iFile, line))
-  {
+  while (std::getline(iFile, line)) {
     latest_line = line;
     latest_line = line = "" && br_flag ? "<br>" : "<br><br>";
-    if (!br_flag)
-    {
+    if (!br_flag) {
       latest_line += std::regex_replace(latest_line, Br, "<br>");
       br_flag = true;
-    }
-    else
-    {
+    } else {
       if (std::regex_match(latest_line, m, brCheck))
         br_flag = false;
     }
     if (std::regex_match(latest_line, m, H))
-      latest_line = "<h" + std::to_string(m[1].str().length()) + '>' + m[2].str() + "</h" + std::to_string(m[1].str().length()) + '>';
+      latest_line = "<h" + std::to_string(m[1].str().length()) + '>' +
+                    m[2].str() + "</h" + std::to_string(m[1].str().length()) +
+                    '>';
     latest_line = std::regex_replace(latest_line, Hr, "<hr>");
-    latest_line = std::regex_replace(latest_line, EB, "<strong><em>$1</em></strong>");
-    latest_line = std::regex_replace(latest_line, Bold, "<strong>$2$4</strong>");
+    latest_line =
+        std::regex_replace(latest_line, EB, "<strong><em>$1</em></strong>");
+    latest_line =
+        std::regex_replace(latest_line, Bold, "<strong>$2$4</strong>");
     latest_line = std::regex_replace(latest_line, Em, "<em>$1</em>");
     latest_line = std::regex_replace(latest_line, S, "<s>$1</s>");
     oFile << latest_line << std::endl;
