@@ -25,16 +25,18 @@ int main(int argc, char *argv[]) {
   std::ifstream iFile(fileName);
   oFile << "<!DOCTYPE HTML>\n<body>" << std::endl;
 
-  bool br_flag = false;
+  bool br_flag = true;
 
   std::string line;
   std::string latest_line;
   std::smatch m;
   while (std::getline(iFile, line)) {
     latest_line = line;
-    latest_line = line = "" && br_flag ? "<br>" : "<br><br>";
+    if (line == "") {
+      latest_line = br_flag ? "<br>" : "<br><br>";
+    }
     if (!br_flag) {
-      latest_line += std::regex_replace(latest_line, Br, "<br>");
+      latest_line = std::regex_replace(latest_line, Br, "<br>");
       br_flag = true;
     } else {
       if (std::regex_match(latest_line, m, brCheck))
@@ -50,7 +52,7 @@ int main(int argc, char *argv[]) {
     latest_line =
         std::regex_replace(latest_line, Bold, "<strong>$2$4</strong>");
     latest_line = std::regex_replace(latest_line, Em, "<em>$1</em>");
-    latest_line = std::regex_replace(latest_line, S, "<s>$1</s>");
+    latest_line = std::regex_replace(latest_line, S, "<s>$2</s>");
     oFile << latest_line << std::endl;
   }
   oFile << "</body>\n</HTML>" << std::endl;
