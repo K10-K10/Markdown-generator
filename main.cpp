@@ -11,6 +11,8 @@ std::regex Bold(R"([*]{2,2}([^*]+)[*]{2,2}|[_]{2,2}([^_]+)[_]{2,2})");
 std::regex Em(R"([*]([^*]+)[*]|[_]([^_]+)[_])");
 std::regex Hr(R"(^([-_*])\1{2,}+$)");
 std::regex S(R"([^~]~([^~]+)~[^~]|~~([^~]+)~~)");
+std::regex Code(R"((^`|[^\\]`)(.+[^(\\`)])`)");
+std::regex Codes(R"((^`{3,}))");
 
 int main(int argc, char *argv[]) {
   std::string fileName, htmlFile = "a.html";
@@ -61,6 +63,7 @@ int main(int argc, char *argv[]) {
         std::regex_replace(latest_line, Bold, "<strong>$2$4</strong>");
     latest_line = std::regex_replace(latest_line, Em, "<em>$1</em>");
     latest_line = std::regex_replace(latest_line, S, "<s>$2</s>");
+    latest_line = std::regex_replace(latest_line, Code, "<code>$2</code>");
     oFile << latest_line << std::endl;
   }
   oFile << "</body>\n</HTML>" << std::endl;
