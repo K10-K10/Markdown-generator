@@ -3,7 +3,7 @@
 #include <iostream>
 #include <regex>
 #include <string>
-std::regex brCheck(R"([^\s]+)");
+std::regex brCheck(R"(\s*[^\s]{1,}.*)");
 std::regex H(R"(^\s*(#{1,6})\s(.*))");
 std::regex Br(R"(\s{2,2}$)");
 std::regex EB(R"([*]{3,3}([^*]+)[*]{3,3})");
@@ -25,22 +25,30 @@ int main(int argc, char *argv[]) {
   std::ifstream iFile(fileName);
   oFile << "<!DOCTYPE HTML>\n<body>" << std::endl;
 
-  bool br_flag = true;
+  bool br_flag = true, emp_flag = false;
 
   std::string line;
   std::string latest_line;
   std::smatch m;
   while (std::getline(iFile, line)) {
     latest_line = line;
-    if (line == "") {
-      latest_line = br_flag ? "<br>" : "<br><br>";
+    if (std::regex_match(latest_line, m, brCheck)) {
+      br_flag = false;
+      emp_flag = false;
     }
     if (!br_flag) {
-      latest_line = std::regex_replace(latest_line, Br, "<br>");
-      br_flag = true;
+      if (latest_line.empty()) {
+        latest_line = "<br><br>";
+        br_flag = true;
+      } else if (std::regex_search(latest_line, Br)) {
+        latest_line = std::regex_replace(latest_line, Br, "<br>");
+        br_flag = true;
+      }
     } else {
-      if (std::regex_match(latest_line, m, brCheck))
-        br_flag = false;
+      if (latest_line.empty() && !emp_flag) {
+        latest_line = "<br>";
+        emp_flag = true;
+      }
     }
     if (std::regex_match(latest_line, m, H))
       latest_line = "<h" + std::to_string(m[1].str().length()) + '>' +
