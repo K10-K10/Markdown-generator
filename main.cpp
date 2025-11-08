@@ -16,13 +16,13 @@ std::regex Codes(R"((^`{3,}))");
 std::regex Link(R"(\[([^[]*)\]\((.*)\))");
 
 int main(int argc, char *argv[]) {
-  std::string fileName, htmlFile = "a.html";
+  std::string fileName, htmlFile = "index.html";
   if (argc < 2) {
     std::cout << "Error: File can't open" << std::endl;
     return 0;
   } else {
     fileName = argv[1];
-    htmlFile = argc == 2 ? "a.html" : argv[2];
+    htmlFile = argc == 2 ? "index.html" : argv[2];
   }
   std::ofstream oFile(htmlFile, std::ios::trunc);
   std::ifstream iFile(fileName);
