@@ -5,7 +5,7 @@
 #include <string>
 std::regex brCheck(R"(\s*[^\s]{1,}.*)");
 std::regex H(R"(^\s*(#{1,6})\s(.*))");
-std::regex Br(R"(\s{2,2}$)");
+std::regex Br(R"(\s{2,2}$|\\$)");
 std::regex EB(R"([*]{3,3}([^*]+)[*]{3,3})");
 std::regex Bold(R"([*]{2,2}([^*]+)[*]{2,2}|[_]{2,2}([^_]+)[_]{2,2})");
 std::regex Em(R"([*]([^*]+)[*]|[_]([^_]+)[_])");
@@ -28,8 +28,9 @@ int main(int argc, char *argv[]) {
   std::ifstream iFile(fileName);
   oFile << "<!DOCTYPE HTML>\n<head>\n\
 <meta charset = \"utf-8\"/>\n\
-<title>" << htmlFile
-        << "</title>\n\
+<link rel=\"stylesheet\" href=\"markdown-style.css\">\n\
+      <title> "
+        << htmlFile << "</title>\n\
 </head>\n<body>"
         << std::endl;
 
