@@ -13,6 +13,7 @@ std::regex Hr(R"(^([-_*])\1{2,}+$)");
 std::regex S(R"([^~]~([^~]+)~[^~]|~~([^~]+)~~)");
 std::regex Code(R"((^`|[^\\]`)(.+[^(\\`)])`)");
 std::regex Codes(R"((^`{3,}))");
+std::regex Link(R"(\[([^[]*)\]\((.*)\))");
 
 int main(int argc, char *argv[]) {
   std::string fileName, htmlFile = "a.html";
@@ -65,6 +66,7 @@ int main(int argc, char *argv[]) {
       latest_line = std::regex_replace(latest_line, Em, "<em>$1</em>");
       latest_line = std::regex_replace(latest_line, S, "<s>$2</s>");
       latest_line = std::regex_replace(latest_line, Code, "<code>$2</code>");
+      latest_line = std::regex_replace(latest_line, Link, "<a href=$2>$1</a>");
     }
     if (std::regex_match(latest_line, m, Codes)) {
       if (code_cnt == 0) {
@@ -73,6 +75,7 @@ int main(int argc, char *argv[]) {
       } else {
         if (code_cnt <= m[1].str().length()) {
           latest_line = "</code></pre>";
+          code_cnt = 0;
         }
       }
     }
