@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
   oFile << "<!DOCTYPE HTML>\n<body>" << std::endl;
 
   bool br_flag = true, emp_flag = false;
-
+  int code_cnt = 0;
   std::string line;
   std::string latest_line;
   std::smatch m;
@@ -38,32 +38,44 @@ int main(int argc, char *argv[]) {
       br_flag = false;
       emp_flag = false;
     }
-    if (!br_flag) {
-      if (latest_line.empty()) {
-        latest_line = "<br><br>";
-        br_flag = true;
-      } else if (std::regex_search(latest_line, Br)) {
-        latest_line = std::regex_replace(latest_line, Br, "<br>");
-        br_flag = true;
+    if (code_cnt == 0) {
+      if (!br_flag) {
+        if (latest_line.empty()) {
+          latest_line = "<br><br>";
+          br_flag = true;
+        } else if (std::regex_search(latest_line, Br)) {
+          latest_line = std::regex_replace(latest_line, Br, "<br>");
+          br_flag = true;
+        }
+      } else {
+        if (latest_line.empty() && !emp_flag) {
+          latest_line = "<br>";
+          emp_flag = true;
+        }
       }
-    } else {
-      if (latest_line.empty() && !emp_flag) {
-        latest_line = "<br>";
-        emp_flag = true;
+      if (std::regex_match(latest_line, m, H))
+        latest_line = "<h" + std::to_string(m[1].str().length()) + '>' +
+                      m[2].str() + "</h" + std::to_string(m[1].str().length()) +
+                      '>';
+      latest_line = std::regex_replace(latest_line, Hr, "<hr>");
+      latest_line =
+          std::regex_replace(latest_line, EB, "<strong><em>$1</em></strong>");
+      latest_line =
+          std::regex_replace(latest_line, Bold, "<strong>$2$4</strong>");
+      latest_line = std::regex_replace(latest_line, Em, "<em>$1</em>");
+      latest_line = std::regex_replace(latest_line, S, "<s>$2</s>");
+      latest_line = std::regex_replace(latest_line, Code, "<code>$2</code>");
+    }
+    if (std::regex_match(latest_line, m, Codes)) {
+      if (code_cnt == 0) {
+        latest_line = "<pre><code>";
+        code_cnt = m[1].str().length();
+      } else {
+        if (code_cnt <= m[1].str().length()) {
+          latest_line = "</code></pre>";
+        }
       }
     }
-    if (std::regex_match(latest_line, m, H))
-      latest_line = "<h" + std::to_string(m[1].str().length()) + '>' +
-                    m[2].str() + "</h" + std::to_string(m[1].str().length()) +
-                    '>';
-    latest_line = std::regex_replace(latest_line, Hr, "<hr>");
-    latest_line =
-        std::regex_replace(latest_line, EB, "<strong><em>$1</em></strong>");
-    latest_line =
-        std::regex_replace(latest_line, Bold, "<strong>$2$4</strong>");
-    latest_line = std::regex_replace(latest_line, Em, "<em>$1</em>");
-    latest_line = std::regex_replace(latest_line, S, "<s>$2</s>");
-    latest_line = std::regex_replace(latest_line, Code, "<code>$2</code>");
     oFile << latest_line << std::endl;
   }
   oFile << "</body>\n</HTML>" << std::endl;
