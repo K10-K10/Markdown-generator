@@ -26,9 +26,14 @@ int main(int argc, char *argv[]) {
   }
   std::ofstream oFile(htmlFile, std::ios::trunc);
   std::ifstream iFile(fileName);
-  oFile << "<!DOCTYPE HTML>\n<body>" << std::endl;
+  oFile << "<!DOCTYPE HTML>\n<head>\n\
+<meta charset = \"utf-8\"/>\n\
+<title>" << htmlFile
+        << "</title>\n\
+</head>\n<body>"
+        << std::endl;
 
-  bool br_flag = true, emp_flag = false;
+  bool br_flag = true, emp_flag = true;
   int code_cnt = 0;
   std::string line;
   std::string latest_line;
