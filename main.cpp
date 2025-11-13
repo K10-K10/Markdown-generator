@@ -68,11 +68,12 @@ int main(int argc, char *argv[]) {
       latest_line =
           std::regex_replace(latest_line, EB, "<strong><em>$1</em></strong>");
       latest_line =
-          std::regex_replace(latest_line, Bold, "<strong>$2$4</strong>");
-      latest_line = std::regex_replace(latest_line, Em, "<em>$1</em>");
-      latest_line = std::regex_replace(latest_line, S, "<s>$2</s>");
+          std::regex_replace(latest_line, Bold, "<strong>$1$2</strong>");
+      latest_line = std::regex_replace(latest_line, Em, "<em>$1$2</em>");
+      latest_line = std::regex_replace(latest_line, S, "<s>$1$2</s>");
       latest_line = std::regex_replace(latest_line, Code, "<code>$2</code>");
-      latest_line = std::regex_replace(latest_line, Link, "<a href=$2>$1</a>");
+      latest_line =
+          std::regex_replace(latest_line, Link, "<a href=\"$2\">$1</a>");
     }
     if (std::regex_match(latest_line, m, Codes)) {
       if (code_cnt == 0) {
