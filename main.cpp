@@ -14,6 +14,8 @@ std::regex S(R"([^~]~([^~]+)~[^~]|~~([^~]+)~~)");
 std::regex Code(R"((^`|[^\\]`)(.+[^(\\`)])`)");
 std::regex Codes(R"((^`{3,}))");
 std::regex Link(R"(\[([^[]*)\]\((.*)\))");
+std::regex UnorderedList(R"(^[-+*]\s+(.*))");
+std::regex OrderedList(R"(^\d+\.\s+(.*))");
 
 int main(int argc, char *argv[]) {
   std::string fileName, htmlFile = "index.html";
@@ -75,6 +77,12 @@ int main(int argc, char *argv[]) {
       latest_line =
           std::regex_replace(latest_line, Link, "<a href=\"$2\">$1</a>");
     }
+    if (std::regex_match(line, m, UnorderedList)) {
+      line = "<ul><li>" + m[1].str() + "</li></ul>";
+    } else if (std::regex_match(line, m, OrderedList)) {
+      line = "<ol><li>" + m[1].str() + "</li></ol>";
+    }
+
     if (std::regex_match(latest_line, m, Codes)) {
       if (code_cnt == 0) {
         latest_line = "<pre><code>";
